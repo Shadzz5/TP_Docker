@@ -1,38 +1,38 @@
-version: '3.2'
+version: '3.8'
 
-networks:
-  wordpress-network: 
+services:
+  app:
+    image: test
+    restart: always
+    ports:
+      - '3000:3000'
+    environment:
+      DB_USER: user
+      DB_PASSWORD: password
+      DB_NAME: mydb
+      DB_HOST: db
+    depends_on:
+      db: 
+        condition: service_healthy
+
+
+  db:
+    image: mysql:8.2
+    restart: always
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 10s
+      retries: 10
+    environment:
+      MYSQL_DATABASE: mydb
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: rootpassword
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - '3306:3306'
 
 volumes:
-  wordpress:
-  wordpressdb:
-  
-services:
-
-  wordpress:
-    image: wordpress
-    restart: always
-    networks: 
-      - wordpress-network
-    ports:
-      - 8080:80
-    environment:
-      WORDPRESS_DB_HOST: wordpressdb
-      WORDPRESS_DB_USER: user
-      WORDPRESS_DB_PASSWORD: pass
-      WORDPRESS_DB_NAME: wordpressdb3
-    volumes:
-      - wordpress:/var/www/html
-
-  wordpressdb:
-    image: mysql:5.7
-    restart: always
-    networks: 
-      - wordpress-network
-    environment:
-      MYSQL_DATABASE: wordpressdb
-      MYSQL_USER: user
-      MYSQL_PASSWORD: pass
-      MYSQL_RANDOM_ROOT_PASSWORD: '1'
-    volumes:
-      - wordpressdb:/var/lib/mysql
+  mysql_data:
+  node:
