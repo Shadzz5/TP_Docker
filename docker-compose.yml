@@ -1,8 +1,8 @@
 version: '3.8'
 
 services:
-  app:
-    image: test
+  api:
+    image: backend
     restart: always
     ports:
       - '3000:3000'
@@ -14,7 +14,23 @@ services:
     depends_on:
       db: 
         condition: service_healthy
+    networks:
+      - local
 
+  frontend:
+    image: frontend
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - frontend:/app/front
+      - frontend:/app/front/node_modules
+    ports:
+      - '8000:8000'
+    environment:  
+      - BACKEND_URL=http://localhost/3000
+    networks:
+      - local
 
   db:
     image: mysql:8.2
@@ -32,6 +48,8 @@ services:
       - mysql_data:/var/lib/mysql
     ports:
       - '3306:3306'
+    networks:
+      - local
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -43,7 +61,14 @@ services:
       - "8080:80" 
     depends_on:
       - db 
+    networks:
+      - local
     restart: unless-stopped
+    
 volumes:
   mysql_data:
   node:
+  frontend:
+  
+networks:
+  local:
