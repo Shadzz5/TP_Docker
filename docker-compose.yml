@@ -33,6 +33,17 @@ services:
     ports:
       - '3306:3306'
 
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      PMA_HOST: db 
+      PMA_USER: root 
+      PMA_PASSWORD: rootpassword 
+    ports:
+      - "8080:80" 
+    depends_on:
+      - db 
+    restart: unless-stopped
 volumes:
   mysql_data:
   node:
