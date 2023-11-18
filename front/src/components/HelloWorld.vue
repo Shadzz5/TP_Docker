@@ -19,7 +19,6 @@ export default {
     axios.get('http://localhost:3000/') 
       .then(response => {
         this.jeux = response.data;
-        console.log(this.jeux);
       })
       .catch(error => {
         console.error('Erreur lors de la récupération des données :', error);
